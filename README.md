@@ -55,7 +55,7 @@ BulkBuy/
 ### 2️⃣ Installation
 ```sh
 # Clone the repository
-git clone https://github.com/yourusername/bulkbuy.git
+git clone https://github.com/DibyadyutiDas/bulkbuy.git
 cd bulkbuy
 
 # Install dependencies
