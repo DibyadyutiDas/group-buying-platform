@@ -4,97 +4,105 @@ import { ShoppingBag, Facebook, Twitter, Instagram, Mail } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-gray-800 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand Section */}
-          <div className="md:col-span-1">
-            <div className="flex items-center mb-4">
-              <ShoppingBag className="h-8 w-8 text-teal-500" />
-              <span className="ml-2 text-2xl font-bold text-white">BulkBuy</span>
-            </div>
-            <p className="text-gray-400 mb-4">
-              Join forces with others to save money through collective purchasing power.
+          {/* Logo and description */}
+          <div className="col-span-1 md:col-span-1">
+            <Link to="/" className="flex items-center">
+              <ShoppingBag className="h-8 w-8 text-blue-400" />
+              <span className="ml-2 text-xl font-bold">BulkBuy</span>
+            </Link>
+            <p className="mt-4 text-sm text-gray-300">
+              Join forces with others to get better deals through collective purchasing power.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">
-                <Facebook size={20} />
+            <div className="mt-6 flex space-x-4">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <span className="sr-only">Facebook</span>
+                <Facebook className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">
-                <Twitter size={20} />
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <span className="sr-only">Twitter</span>
+                <Twitter className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">
-                <Instagram size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">
-                <Mail size={20} />
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <span className="sr-only">Instagram</span>
+                <Instagram className="h-6 w-6" />
               </a>
             </div>
           </div>
           
-          {/* Quick Links */}
+          {/* Quick links */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
+            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-gray-400 hover:text-teal-500 transition-colors">Home</Link>
+                <Link to="/" className="text-gray-300 hover:text-white transition-colors">
+                  Home
+                </Link>
               </li>
               <li>
-                <Link to="/products" className="text-gray-400 hover:text-teal-500 transition-colors">Products</Link>
+                <Link to="/products" className="text-gray-300 hover:text-white transition-colors">
+                  Browse Products
+                </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="text-gray-400 hover:text-teal-500 transition-colors">Dashboard</Link>
+                <Link to="/dashboard" className="text-gray-300 hover:text-white transition-colors">
+                  Dashboard
+                </Link>
               </li>
               <li>
-                <Link to="/auth" className="text-gray-400 hover:text-teal-500 transition-colors">Sign In / Sign Up</Link>
+                <Link to="/products/new" className="text-gray-300 hover:text-white transition-colors">
+                  Add Product
+                </Link>
               </li>
             </ul>
           </div>
           
-          {/* Support */}
+          {/* Resources */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Support</h3>
+            <h3 className="text-lg font-semibold mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">FAQ</a>
+                <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  How It Works
+                </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">Help Center</a>
+                <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  FAQs
+                </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">Contact Us</a>
+                <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  Blog
+                </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">Privacy Policy</a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-teal-500 transition-colors">Terms of Service</a>
+                <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  Success Stories
+                </a>
               </li>
             </ul>
           </div>
           
-          {/* Newsletter */}
+          {/* Contact */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Stay Updated</h3>
-            <p className="text-gray-400 mb-4">Subscribe to our newsletter for the latest deals and updates.</p>
-            <form className="flex flex-col space-y-2">
-              <input
-                type="email"
-                placeholder="Your Email"
-                className="px-4 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-              <button
-                type="submit"
-                className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
+            <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
+            <p className="text-gray-300 flex items-center">
+              <Mail className="h-5 w-5 mr-2" />
+              support@bulkbuy.com
+            </p>
+            <p className="mt-4 text-sm text-gray-300">
+              We'd love to hear from you! Send us your questions, feedback, or partnership inquiries.
+            </p>
           </div>
         </div>
         
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} BulkBuy. All rights reserved.</p>
+        <div className="mt-12 pt-8 border-t border-gray-700">
+          <p className="text-center text-gray-400 text-sm">
+            &copy; {new Date().getFullYear()} BulkBuy. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

@@ -1,149 +1,185 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, User, Bell } from 'lucide-react';
+import { Menu, X, ShoppingBag, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import NotificationDropdown from '../ui/NotificationDropdown';
+import Button from '../ui/Button';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    // Close mobile menu when route changes
+  
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+  
+  const closeMenu = () => {
     setIsMenuOpen(false);
-  }, [location]);
+  };
+  
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+  };
+  
+  const navItems = [
+    { title: 'Home', path: '/' },
+    { title: 'Browse Products', path: '/products' },
+    { title: 'Dashboard', path: '/dashboard', requiresAuth: true },
+    { title: 'Add Product', path: '/products/new', requiresAuth: true },
+  ];
+  
+  const filteredNavItems = navItems.filter(item => 
+    !item.requiresAuth || (item.requiresAuth && user)
+  );
 
   return (
-    <header 
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
-      }`}
-    >
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center">
-          <ShoppingBag className="h-8 w-8 text-teal-600" />
-          <span className="ml-2 text-2xl font-bold text-gray-800">BulkBuy</span>
-        </Link>
-        
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/" className="text-gray-700 hover:text-teal-600 transition-colors">
-            Home
-          </Link>
-          <Link to="/products" className="text-gray-700 hover:text-teal-600 transition-colors">
-            Products
-          </Link>
-          <Link to="/dashboard" className="text-gray-700 hover:text-teal-600 transition-colors">
-            Dashboard
-          </Link>
-          {isAuthenticated ? (
-            <div className="flex items-center space-x-5">
-              <div className="relative">
-                <button 
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="text-gray-700 hover:text-teal-600 transition-colors relative"
-                >
-                  <Bell size={20} />
-                  <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    3
-                  </span>
-                </button>
-                {showNotifications && <NotificationDropdown />}
-              </div>
-              <div className="flex items-center space-x-3">
-                <img 
-                  src={user?.avatar || 'https://i.pravatar.cc/150?u=default'} 
-                  alt="User Avatar" 
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-                <div className="relative group">
-                  <button className="text-gray-700 hover:text-teal-600">
-                    {user?.name}
-                  </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10 hidden group-hover:block">
-                    <Link to="/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-teal-50">
-                      Dashboard
-                    </Link>
-                    <button 
-                      onClick={logout}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-teal-50"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <Link 
-              to="/auth" 
-              className="bg-teal-600 text-white px-5 py-2 rounded-full hover:bg-teal-700 transition-colors"
-            >
-              Sign In
+    <header className="bg-white shadow-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0 flex items-center">
+            <Link to="/" className="flex items-center" onClick={closeMenu}>
+              <ShoppingBag className="h-8 w-8 text-blue-600" />
+              <span className="ml-2 text-xl font-bold text-gray-900">BulkBuy</span>
             </Link>
-          )}
-        </nav>
-        
-        {/* Mobile Menu Toggle */}
-        <button 
-          className="md:hidden text-gray-700"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+          </div>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex space-x-8">
+            {filteredNavItems.map(item => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 transition-colors ${
+                  location.pathname === item.path
+                    ? 'border-blue-500 text-gray-900'
+                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                }`}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </nav>
+          
+          {/* User Actions */}
+          <div className="hidden md:flex items-center">
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center">
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <span className="ml-2 text-sm font-medium text-gray-700">
+                    {user.name}
+                  </span>
+                </div>
+                <Button variant="outline" size="sm" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="flex space-x-4">
+                <Link to="/login">
+                  <Button variant="outline" size="sm">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm">Sign Up</Button>
+                </Link>
+              </div>
+            )}
+          </div>
+          
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={toggleMenu}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+            >
+              <span className="sr-only">Open main menu</span>
+              {isMenuOpen ? (
+                <X className="block h-6 w-6" aria-hidden="true" />
+              ) : (
+                <Menu className="block h-6 w-6" aria-hidden="true" />
+              )}
+            </button>
+          </div>
+        </div>
       </div>
       
-      {/* Mobile Navigation */}
+      {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white absolute top-full left-0 w-full shadow-lg py-4 px-4">
-          <nav className="flex flex-col space-y-4">
-            <Link to="/" className="text-gray-700 hover:text-teal-600 transition-colors py-2">
-              Home
-            </Link>
-            <Link to="/products" className="text-gray-700 hover:text-teal-600 transition-colors py-2">
-              Products
-            </Link>
-            <Link to="/dashboard" className="text-gray-700 hover:text-teal-600 transition-colors py-2">
-              Dashboard
-            </Link>
-            {isAuthenticated ? (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="pt-2 pb-3 space-y-1">
+            {filteredNavItems.map(item => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
+                  location.pathname === item.path
+                    ? 'bg-blue-50 border-blue-500 text-blue-700'
+                    : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
+                }`}
+                onClick={closeMenu}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </div>
+          
+          {/* Mobile user actions */}
+          <div className="pt-4 pb-3 border-t border-gray-200">
+            {user ? (
               <>
-                <div className="flex items-center space-x-3 py-2">
-                  <img 
-                    src={user?.avatar || 'https://i.pravatar.cc/150?u=default'} 
-                    alt="User Avatar" 
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <span>{user?.name}</span>
+                <div className="flex items-center px-4">
+                  <div className="flex-shrink-0">
+                    <img
+                      className="h-10 w-10 rounded-full"
+                      src={user.avatar}
+                      alt={user.name}
+                    />
+                  </div>
+                  <div className="ml-3">
+                    <div className="text-base font-medium text-gray-800">
+                      {user.name}
+                    </div>
+                    <div className="text-sm font-medium text-gray-500">
+                      {user.email}
+                    </div>
+                  </div>
                 </div>
-                <button 
-                  onClick={logout}
-                  className="text-gray-700 hover:text-teal-600 transition-colors py-2"
-                >
-                  Sign Out
-                </button>
+                <div className="mt-3 space-y-1">
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
               </>
             ) : (
-              <Link 
-                to="/auth" 
-                className="bg-teal-600 text-white px-5 py-2 rounded-full hover:bg-teal-700 transition-colors text-center"
-              >
-                Sign In
-              </Link>
+              <div className="px-4 py-2 space-y-2">
+                <Link
+                  to="/login"
+                  className="block text-center w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                  onClick={closeMenu}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="block text-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                  onClick={closeMenu}
+                >
+                  Sign Up
+                </Link>
+              </div>
             )}
-          </nav>
+          </div>
         </div>
       )}
     </header>

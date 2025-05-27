@@ -1,103 +1,76 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-}
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User } from '../types';
+import { getCurrentUser, loginUser, logoutUser, registerUser } from '../utils/storage';
 
 interface AuthContextType {
   user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  error: string | null;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if user is stored in localStorage (simulating persistence)
-    const storedUser = localStorage.getItem('bulkbuy_user');
+    // Check for stored user on initial load
+    const storedUser = getCurrentUser();
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(storedUser);
     }
-    setIsLoading(false);
+    setLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
-    // This is a mock implementation - would be replaced with actual API call
-    setIsLoading(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock user for demo purposes
-      const mockUser = {
-        id: '123',
-        name: 'Demo User',
-        email,
-        avatar: 'https://i.pravatar.cc/150?u=123',
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('bulkbuy_user', JSON.stringify(mockUser));
+      setLoading(true);
+      setError(null);
+      const user = loginUser(email, password);
+      setUser(user);
+    } catch (err) {
+      setError((err as Error).message);
+      throw err;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const signup = async (name: string, email: string, password: string) => {
-    // This is a mock implementation - would be replaced with actual API call
-    setIsLoading(true);
+  const register = async (name: string, email: string, password: string) => {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock user for demo purposes
-      const mockUser = {
-        id: Date.now().toString(),
-        name,
-        email,
-        avatar: `https://i.pravatar.cc/150?u=${Date.now()}`,
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('bulkbuy_user', JSON.stringify(mockUser));
+      setLoading(true);
+      setError(null);
+      const user = registerUser(name, email, password);
+      setUser(user);
+    } catch (err) {
+      setError((err as Error).message);
+      throw err;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const logout = () => {
+    logoutUser();
     setUser(null);
-    localStorage.removeItem('bulkbuy_user');
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isAuthenticated: !!user,
-      isLoading,
-      login,
-      signup,
-      logout
-    }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, error }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

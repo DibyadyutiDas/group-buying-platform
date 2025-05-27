@@ -1,331 +1,227 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { SearchIcon, TrendingUp, Users, ShieldCheck, BadgePercent } from 'lucide-react';
-import ProductCard, { Product } from '../components/products/ProductCard';
-
-const mockFeaturedProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Apple MacBook Pro 14"',
-    description: 'M3 Pro, 16GB RAM, 512GB SSD, Space Gray',
-    image: 'https://images.pexels.com/photos/303383/pexels-photo-303383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    regularPrice: 1999,
-    bulkPrice: 1699,
-    minGroupSize: 20,
-    currentGroupSize: 15,
-    deadline: '2025-06-15',
-    category: 'Electronics'
-  },
-  {
-    id: '2',
-    name: 'Samsung 55" 4K Smart TV',
-    description: 'Crystal UHD 4K, Smart Hub, Multiple Voice Assistants',
-    image: 'https://images.pexels.com/photos/5721867/pexels-photo-5721867.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    regularPrice: 699,
-    bulkPrice: 549,
-    minGroupSize: 10,
-    currentGroupSize: 6,
-    deadline: '2025-06-10',
-    category: 'Electronics'
-  },
-  {
-    id: '3',
-    name: 'Sony WH-1000XM5 Headphones',
-    description: 'Wireless Noise Cancelling Headphones with Auto Noise Cancelling Optimizer',
-    image: 'https://images.pexels.com/photos/3394666/pexels-photo-3394666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    regularPrice: 399,
-    bulkPrice: 299,
-    minGroupSize: 10,
-    currentGroupSize: 9,
-    deadline: '2025-06-05',
-    category: 'Electronics'
-  },
-  {
-    id: '4',
-    name: 'Dyson V12 Detect Slim',
-    description: 'Cordless Vacuum Cleaner with Laser Detection',
-    image: 'https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    regularPrice: 649.99,
-    bulkPrice: 499.99,
-    minGroupSize: 15,
-    currentGroupSize: 8,
-    deadline: '2025-06-20',
-    category: 'Home'
-  }
-];
-
-const testimonials = [
-  {
-    id: '1',
-    text: "BulkBuy helped me save over $300 on a new laptop by connecting me with others looking to buy the same model. The process was seamless!",
-    name: "Sarah Johnson",
-    title: "Marketing Manager",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg"
-  },
-  {
-    id: '2',
-    text: "As a small business owner, every dollar counts. Through BulkBuy, I was able to purchase office equipment at wholesale prices without being a wholesaler myself.",
-    name: "Michael Chen",
-    title: "Startup Founder",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg"
-  },
-  {
-    id: '3',
-    text: "The community aspect of BulkBuy is what sets it apart. Not only did I save money, but I connected with like-minded people who share similar interests.",
-    name: "Priya Patel",
-    title: "Product Designer",
-    avatar: "https://randomuser.me/api/portraits/women/65.jpg"
-  }
-];
+import { useProducts } from '../context/ProductContext';
+import { ShoppingBag, Users, Zap, TrendingUp } from 'lucide-react';
+import Button from '../components/ui/Button';
+import ProductCard from '../components/product/ProductCard';
 
 const HomePage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const { products, loading } = useProducts();
   
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsHeaderVisible(window.scrollY < 100);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // Get the three most recently added products
+  const recentProducts = [...products]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 3);
   
   return (
-    <div className="w-full">
+    <div>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-teal-600 to-purple-700 text-white pt-32 pb-20">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Save Big by Shopping Together
-            </h1>
-            <p className="text-xl mb-8 text-teal-100">
-              Connect with others who want the same products and unlock bulk discounts. The smart way to plan your purchases.
-            </p>
-            <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-              <Link 
-                to="/products" 
-                className="bg-white text-teal-600 px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors shadow-lg w-full md:w-auto"
-              >
-                Browse Products
-              </Link>
-              <Link 
-                to="/auth" 
-                className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-full font-medium hover:bg-white hover:text-teal-600 transition-colors w-full md:w-auto"
-              >
-                Sign Up Free
-              </Link>
+      <section className="bg-gradient-to-r from-blue-600 to-indigo-700 py-20 px-4 sm:px-6 lg:px-8 text-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center md:text-left md:flex md:items-center md:justify-between">
+            <div className="md:w-7/12">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                Save More By <span className="text-yellow-300">Buying Together</span>
+              </h1>
+              <p className="text-xl md:text-2xl mb-8 text-blue-100">
+                Connect with others who want to buy the same products and unlock bulk discounts through collective purchasing power.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                <Link to="/products">
+                  <Button size="lg" className="w-full sm:w-auto">
+                    Browse Products
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto bg-transparent border-white text-white hover:bg-white hover:text-blue-700">
+                    Sign Up for Free
+                  </Button>
+                </Link>
+              </div>
             </div>
-          </div>
-          
-          <div className="mt-12 max-w-2xl mx-auto relative">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search for products to buy in bulk..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-5 py-4 pr-12 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-800"
+            <div className="hidden md:block md:w-5/12">
+              <img 
+                src="https://images.pexels.com/photos/3184422/pexels-photo-3184422.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                alt="People shopping together" 
+                className="rounded-lg shadow-2xl transform -rotate-3 border-4 border-white"
               />
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <SearchIcon size={20} />
-              </div>
             </div>
-            <div className="flex justify-center mt-4 text-sm text-teal-100">
-              <span className="mr-2">Popular:</span>
-              <div className="flex space-x-3">
-                <span className="cursor-pointer hover:text-white transition-colors">Electronics</span>
-                <span className="cursor-pointer hover:text-white transition-colors">Home Appliances</span>
-                <span className="cursor-pointer hover:text-white transition-colors">Furniture</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
-            <path fill="white" fillOpacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
-          </svg>
-        </div>
-      </section>
-      
-      {/* Featured Products */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800">Trending Group Buys</h2>
-            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              Join these active group purchases and save with others. The more people join, the bigger the discount!
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {mockFeaturedProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          
-          <div className="text-center mt-12">
-            <Link 
-              to="/products" 
-              className="inline-block bg-teal-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-teal-700 transition-colors shadow-md"
-            >
-              View All Products
-            </Link>
           </div>
         </div>
       </section>
       
       {/* How It Works */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800">How BulkBuy Works</h2>
-            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              Our platform makes it easy to save money through the power of collective purchasing.
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">How BulkBuy Works</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Join forces with other buyers to get better deals through the power of bulk purchasing.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-xl shadow-md text-center">
-              <div className="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="h-8 w-8 text-teal-600" />
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-md text-center">
+              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Join a Group</h3>
+              <h3 className="text-xl font-semibold mb-2">1. Add Products</h3>
               <p className="text-gray-600">
-                Find products you're interested in buying and join an existing group purchase or start your own.
+                Add products you plan to purchase in the future to your wishlist.
               </p>
             </div>
             
-            <div className="bg-white p-8 rounded-xl shadow-md text-center">
-              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <TrendingUp className="h-8 w-8 text-purple-600" />
+            <div className="bg-white p-6 rounded-lg shadow-md text-center">
+              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Reach the Goal</h3>
+              <h3 className="text-xl font-semibold mb-2">2. Match with Others</h3>
               <p className="text-gray-600">
-                Once enough people join the group buy, the discount is unlocked and everyone in the group saves.
+                Get matched with other users interested in buying the same products.
               </p>
             </div>
             
-            <div className="bg-white p-8 rounded-xl shadow-md text-center">
-              <div className="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BadgePercent className="h-8 w-8 text-amber-600" />
+            <div className="bg-white p-6 rounded-lg shadow-md text-center">
+              <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Save Money</h3>
+              <h3 className="text-xl font-semibold mb-2">3. Save Together</h3>
               <p className="text-gray-600">
-                Make your purchase at the discounted bulk rate and save money on products you were planning to buy anyway.
+                Join forces to place bulk orders and enjoy significant discounts.
               </p>
             </div>
           </div>
         </div>
       </section>
       
-      {/* Testimonials */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800">What Our Users Say</h2>
-            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              Join thousands of satisfied users who are saving money through collaborative purchasing.
-            </p>
+      {/* Recent Products */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">Recent Products</h2>
+            <Link to="/products">
+              <Button variant="outline" size="sm">
+                View All
+              </Button>
+            </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map(testimonial => (
-              <div key={testimonial.id} className="bg-gray-50 p-8 rounded-xl shadow-sm">
-                <div className="flex items-center mb-4">
-                  <img 
-                    src={testimonial.avatar} 
-                    alt={testimonial.name} 
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div className="ml-4">
-                    <h4 className="font-medium text-gray-800">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-500">{testimonial.title}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {loading ? (
+              [...Array(3)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <div className="h-48 bg-gray-200 animate-pulse"></div>
+                  <div className="p-4">
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-2 w-1/4"></div>
+                    <div className="h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-2 w-3/4"></div>
+                    <div className="h-6 bg-gray-200 rounded animate-pulse mt-4 w-1/3"></div>
                   </div>
                 </div>
-                <p className="text-gray-600 italic">"{testimonial.text}"</p>
+              ))
+            ) : recentProducts.length > 0 ? (
+              recentProducts.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-12">
+                <p className="text-gray-500">No products available yet. Be the first to add one!</p>
+                <Link to="/products/new" className="mt-4 inline-block">
+                  <Button>Add Product</Button>
+                </Link>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
       
-      {/* Benefits */}
-      <section className="py-16 bg-gray-900 text-white">
-        <div className="container mx-auto px-4">
+      {/* Benefits Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold">Why Choose BulkBuy</h2>
-            <p className="text-gray-300 mt-4 max-w-2xl mx-auto">
-              Our platform offers unique advantages that help you save money and shop smarter.
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose BulkBuy?</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We're revolutionizing how people purchase products by harnessing the power of community.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="bg-teal-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BadgePercent className="h-8 w-8 text-teal-200" />
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-start">
+                <div className="bg-blue-100 p-3 rounded-lg mr-4">
+                  <TrendingUp className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Save 15-40% on Average</h3>
+                  <p className="text-gray-600">
+                    Users typically save between 15-40% on their purchases by joining forces with others. The more people join, the bigger the discount.
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Save 15-40%</h3>
-              <p className="text-gray-300">
-                Access bulk pricing discounts that are normally only available to businesses.
-              </p>
             </div>
             
-            <div className="text-center">
-              <div className="bg-teal-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="h-8 w-8 text-teal-200" />
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-start">
+                <div className="bg-green-100 p-3 rounded-lg mr-4">
+                  <Users className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Growing Community</h3>
+                  <p className="text-gray-600">
+                    Join thousands of smart shoppers who are already using BulkBuy to save money on their purchases.
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Community-Driven</h3>
-              <p className="text-gray-300">
-                Connect with like-minded shoppers and leverage collective purchasing power.
-              </p>
             </div>
             
-            <div className="text-center">
-              <div className="bg-teal-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <ShieldCheck className="h-8 w-8 text-teal-200" />
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-start">
+                <div className="bg-purple-100 p-3 rounded-lg mr-4">
+                  <Zap className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Simple Process</h3>
+                  <p className="text-gray-600">
+                    Our platform makes it easy to find others interested in the same products and coordinate bulk purchases.
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Secure Platform</h3>
-              <p className="text-gray-300">
-                Shop with confidence knowing all transactions are protected and secure.
-              </p>
             </div>
             
-            <div className="text-center">
-              <div className="bg-teal-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <TrendingUp className="h-8 w-8 text-teal-200" />
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-start">
+                <div className="bg-orange-100 p-3 rounded-lg mr-4">
+                  <ShoppingBag className="w-6 h-6 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Wide Range of Products</h3>
+                  <p className="text-gray-600">
+                    From electronics to furniture, find group buying opportunities across multiple categories.
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Smarter Shopping</h3>
-              <p className="text-gray-300">
-                Plan purchases in advance and avoid impulse buying with our wishlist feature.
-              </p>
             </div>
           </div>
         </div>
       </section>
       
-      {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-teal-600 to-purple-700 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Start Saving?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Join BulkBuy today and connect with others to unlock bulk discounts on your future purchases.
+      {/* CTA Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-blue-600 text-white">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-4">Ready to Start Saving?</h2>
+          <p className="text-xl mb-8 text-blue-100">
+            Join BulkBuy today and connect with others to unlock the power of collective purchasing.
           </p>
-          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-            <Link 
-              to="/auth" 
-              className="bg-white text-teal-600 px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors shadow-lg w-full md:w-auto"
-            >
-              Create Free Account
+          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <Link to="/register">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 w-full sm:w-auto">
+                Sign Up Now
+              </Button>
             </Link>
-            <Link 
-              to="/products" 
-              className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-full font-medium hover:bg-white hover:text-teal-600 transition-colors w-full md:w-auto"
-            >
-              Browse Products
+            <Link to="/products">
+              <Button variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white hover:text-blue-700 w-full sm:w-auto">
+                Browse Products
+              </Button>
             </Link>
           </div>
         </div>
