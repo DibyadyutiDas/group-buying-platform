@@ -7,5 +7,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  base: 'https://github.com/DibyadyutiDas/group-buying-platform',
+  base: '/group-buying-platform',
 });
