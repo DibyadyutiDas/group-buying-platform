@@ -1,8 +1,6 @@
 # 🛒 BulkBuy: A Smart Group Buying Platform
 
-<p align="center">
-  <img src="https://github.com/DibyadyutiDas/project_img/blob/main/Collaborative%20Buying%20Platform.png?raw=true" alt="BulkBuy" width="60%" />
-</p>
+---
 
 ## 📝 Overview
 **BulkBuy** is a collaborative purchasing platform that allows users to share their planned future purchases and connect with others interested in buying the same product. By pooling orders together, users can buy in bulk and enjoy lower costs through collective purchasing power.
@@ -55,8 +53,8 @@ BulkBuy/
 ### 2️⃣ Installation
 ```sh
 # Clone the repository
-git clone https://github.com/DibyadyutiDas/bulkbuy.git
-cd bulkbuy
+git clone https://github.com/DibyadyutiDas/group-buying-platform
+cd group-buying-platform
 
 # Install dependencies
 npm install
