@@ -1,12 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  base: '/group-buying-platform/',
+  base: command === 'build' ? '/group-buying-platform/' : '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -29,4 +29,4 @@ export default defineConfig({
     port: 4173,
     host: true
   }
-});
+}));

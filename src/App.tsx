@@ -19,9 +19,12 @@ import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 function App() {
+  // Get basename for GitHub Pages deployment
+  const basename = import.meta.env.DEV ? '/' : '/group-buying-platform';
+  
   return (
     <ErrorBoundary>
-      <Router>
+      <Router basename={basename}>
         <ThemeProvider>
           <ToastProvider>
             <NotificationProvider>
