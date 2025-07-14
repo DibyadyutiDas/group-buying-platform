@@ -3,7 +3,7 @@ const { body, query } = require('express-validator');
 const Comment = require('../models/Comment');
 const Product = require('../models/Product');
 const { authenticateToken } = require('../middleware/auth');
-const { handleValidationErrors } = require('../middleware/validation');
+const { handleValidationErrors, sanitizeId } = require('../middleware/validation');
 
 const router = express.Router();
 

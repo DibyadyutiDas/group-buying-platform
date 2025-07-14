@@ -58,6 +58,7 @@ export const useAsync = <T>(asyncFunction: () => Promise<T>, dependencies: unkno
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asyncFunction, ...dependencies]);
 
   return { data, loading, error };

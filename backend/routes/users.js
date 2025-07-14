@@ -4,7 +4,7 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const Comment = require('../models/Comment');
 const { authenticateToken } = require('../middleware/auth');
-const { handleValidationErrors } = require('../middleware/validation');
+const { handleValidationErrors, sanitizeEmail } = require('../middleware/validation');
 
 const router = express.Router();
 
@@ -59,7 +59,8 @@ router.put('/profile', authenticateToken, [
     
     // Check if email is already taken by another user
     if (email && email !== req.user.email) {
-      const existingUser = await User.findOne({ email });
+      const sanitizedEmail = sanitizeEmail(email);
+      const existingUser = await User.findOne({ email: sanitizedEmail });
       if (existingUser) {
         return res.status(400).json({ message: 'Email already in use' });
       }
@@ -136,9 +137,11 @@ router.get('/', [
     const query = { isActive: true };
     
     if (search) {
+      // Escape regex special characters to prevent injection
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } }
+        { name: { $regex: escapedSearch, $options: 'i' } },
+        { email: { $regex: escapedSearch, $options: 'i' } }
       ];
     }
 
@@ -318,6 +321,29 @@ router.get('/:id/interested', [
       return res.status(400).json({ message: 'Invalid user ID' });
     }
     res.status(500).json({ message: 'Server error while fetching interested products' });
+  }
+});
+
+// @route   GET /api/users/online
+// @desc    Get list of online users
+// @access  Private
+router.get('/online', authenticateToken, async (req, res) => {
+  try {
+    const onlineUsers = await User.find({ 
+      isOnline: true,
+      isActive: true 
+    })
+    .select('name email avatar lastActivity')
+    .sort({ lastActivity: -1 })
+    .limit(50); // Limit to 50 most recent active users
+
+    res.json({
+      users: onlineUsers,
+      count: onlineUsers.length
+    });
+  } catch (error) {
+    console.error('Error fetching online users:', error);
+    res.status(500).json({ message: 'Error fetching online users' });
   }
 });
 

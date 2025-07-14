@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+    match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Please enter a valid email']
   },
   password: {
     type: String,
@@ -37,6 +37,14 @@ const userSchema = new mongoose.Schema({
   },
   lastLogin: {
     type: Date
+  },
+  isOnline: {
+    type: Boolean,
+    default: false
+  },
+  lastActivity: {
+    type: Date,
+    default: Date.now
   },
   isEmailVerified: {
     type: Boolean,
@@ -150,6 +158,50 @@ userSchema.methods.clearEmailVerificationOTP = function() {
 userSchema.methods.clearPasswordResetOTP = function() {
   this.passwordResetOTP = undefined;
   this.passwordResetOTPExpires = undefined;
+};
+
+// Set user online status
+userSchema.methods.setOnline = async function() {
+  this.isOnline = true;
+  this.lastActivity = new Date();
+  this.lastLogin = new Date();
+  return await this.save();
+};
+
+// Set user offline status
+userSchema.methods.setOffline = async function() {
+  this.isOnline = false;
+  this.lastActivity = new Date();
+  return await this.save();
+};
+
+// Update last activity
+userSchema.methods.updateActivity = async function() {
+  this.lastActivity = new Date();
+  if (this.isOnline) {
+    return await this.save();
+  }
+};
+
+// Check if user should be considered offline (inactive for 5 minutes)
+userSchema.methods.shouldBeOffline = function() {
+  if (!this.lastActivity) return true;
+  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+  return this.lastActivity < fiveMinutesAgo;
+};
+
+// Static method to clean up inactive users
+userSchema.statics.markInactiveUsersOffline = async function() {
+  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+  return await this.updateMany(
+    { 
+      isOnline: true,
+      lastActivity: { $lt: fiveMinutesAgo }
+    },
+    { 
+      isOnline: false 
+    }
+  );
 };
 
 // Remove password from JSON output

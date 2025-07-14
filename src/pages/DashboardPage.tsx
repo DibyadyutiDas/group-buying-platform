@@ -6,6 +6,7 @@ import { useProducts } from '../context/ProductContext';
 import { Product } from '../types';
 import Button from '../components/common/Button';
 import ProductCard from '../components/product/ProductCard';
+import OnlineUsers from '../components/common/OnlineUsers';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -101,94 +102,105 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
       
-      {/* My Products */}
-      <div className="mb-12">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">My Products</h2>
-          <Link to="/products/new">
-            <Button variant="outline" size="sm">
-              Add New
-            </Button>
-          </Link>
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Main Dashboard Content */}
+        <div className="lg:col-span-3">
+          {/* My Products */}
+          <div className="mb-12">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">My Products</h2>
+              <Link to="/products/new">
+                <Button variant="outline" size="sm">
+                  Add New
+                </Button>
+              </Link>
+            </div>
+            
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[...Array(2)].map((_, i) => (
+                  <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                    <div className="h-48 bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
+                    <div className="p-4">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2 w-1/4"></div>
+                      <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2 w-3/4"></div>
+                      <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mt-4 w-1/3"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : myProducts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {myProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 text-center">
+                <ShoppingBag className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No products yet</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  Add products you're planning to purchase to find group buying opportunities.
+                </p>
+                <Link to="/products/new">
+                  <Button>Add Your First Product</Button>
+                </Link>
+              </div>
+            )}
+          </div>
+          
+          {/* Interested Products */}
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Products I'm Interested In</h2>
+              <Link to="/products">
+                <Button variant="outline" size="sm">
+                  Browse More
+                </Button>
+              </Link>
+            </div>
+            
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[...Array(2)].map((_, i) => (
+                  <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                    <div className="h-48 bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
+                    <div className="p-4">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2 w-1/4"></div>
+                      <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2 w-3/4"></div>
+                      <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mt-4 w-1/3"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : interestedProducts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {interestedProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 text-center">
+                <ThumbsUp className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No interests yet</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  Browse products and mark ones you're interested in to join group buying opportunities.
+                </p>
+                <Link to="/products">
+                  <Button>Browse Products</Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
         
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-                <div className="h-48 bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
-                <div className="p-4">
-                  <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2 w-1/4"></div>
-                  <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2 w-3/4"></div>
-                  <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mt-4 w-1/3"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : myProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {myProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 text-center">
-            <ShoppingBag className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No products yet</h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Add products you're planning to purchase to find group buying opportunities.
-            </p>
-            <Link to="/products/new">
-              <Button>Add Your First Product</Button>
-            </Link>
-          </div>
-        )}
-      </div>
-      
-      {/* Interested Products */}
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Products I'm Interested In</h2>
-          <Link to="/products">
-            <Button variant="outline" size="sm">
-              Browse More
-            </Button>
-          </Link>
+        {/* Sidebar */}
+        <div className="lg:col-span-1">
+          <OnlineUsers className="sticky top-6" />
         </div>
-        
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-                <div className="h-48 bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
-                <div className="p-4">
-                  <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2 w-1/4"></div>
-                  <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2 w-3/4"></div>
-                  <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mt-4 w-1/3"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : interestedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {interestedProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 text-center">
-            <ThumbsUp className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No interests yet</h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Browse products and mark ones you're interested in to join group buying opportunities.
-            </p>
-            <Link to="/products">
-              <Button>Browse Products</Button>
-            </Link>
-          </div>
-        )}
       </div>
       </div>
     </div>

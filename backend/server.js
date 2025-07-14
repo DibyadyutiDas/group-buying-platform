@@ -74,7 +74,11 @@ app.use(cors({
     // Check if origin is in allowed list or matches pattern
     const isAllowed = allowedOrigins.some(allowedOrigin => {
       if (origin === allowedOrigin) return true;
-      if (allowedOrigin.includes('dibyadyutidas.github.io') && origin.includes('dibyadyutidas.github.io')) return true;
+      // More secure domain checking for GitHub Pages
+      if (allowedOrigin === 'https://dibyadyutidas.github.io' && 
+          origin.startsWith('https://dibyadyutidas.github.io')) {
+        return true;
+      }
       return false;
     });
     
@@ -107,13 +111,32 @@ connectDB();
 
 // Request logging middleware for debugging
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`, {
+  const userAgent = req.headers['user-agent'];
+  const truncatedUserAgent = userAgent ? userAgent.substring(0, 50) + '...' : 'Unknown';
+  
+  const logData = {
+    timestamp: new Date().toISOString(),
+    method: req.method,
+    path: req.path,
     origin: req.headers.origin,
-    userAgent: req.headers['user-agent']?.substring(0, 50) + '...',
+    userAgent: truncatedUserAgent,
     contentType: req.headers['content-type']
+  };
+  
+  console.log('%s - %s %s', logData.timestamp, logData.method, logData.path, {
+    origin: logData.origin,
+    userAgent: logData.userAgent,
+    contentType: logData.contentType
   });
   next();
 });
+
+// User activity tracking middleware
+const { trackUserActivity, cleanupInactiveUsers } = require('./middleware/userActivity');
+app.use(trackUserActivity);
+
+// Start cleanup process for inactive users
+cleanupInactiveUsers();
 
 // Routes
 app.use('/api/auth', authRoutes);

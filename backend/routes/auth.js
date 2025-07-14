@@ -2,7 +2,8 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body } = require('express-validator');
 const User = require('../models/User');
-const { handleValidationErrors } = require('../middleware/validation');
+const { handleValidationErrors, sanitizeEmail } = require('../middleware/validation');
+const { authenticateToken } = require('../middleware/auth');
 const emailService = require('../services/emailService');
 
 const router = express.Router();
@@ -41,8 +42,11 @@ router.post('/register', [
       timestamp: new Date().toISOString()
     });
 
+    // Sanitize email to prevent injection
+    const sanitizedEmail = sanitizeEmail(email);
+
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: sanitizedEmail });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
@@ -50,7 +54,7 @@ router.post('/register', [
     // Create new user (but don't save yet, will save after OTP verification)
     const user = new User({
       name,
-      email,
+      email: sanitizedEmail,
       password,
       isEmailVerified: false
     });
@@ -62,7 +66,7 @@ router.post('/register', [
     await user.save();
     
     // Send OTP email
-    const emailResult = await emailService.sendEmailVerificationOTP(email, otp, name);
+    const emailResult = await emailService.sendEmailVerificationOTP(sanitizedEmail, otp, name);
     
     if (!emailResult.success) {
       // If email fails, delete the user and return error
@@ -124,8 +128,11 @@ router.post('/verify-email', [
   try {
     const { email, otp } = req.body;
 
+    // Sanitize email to prevent injection
+    const sanitizedEmail = sanitizeEmail(email);
+
     // Find user with OTP fields
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email: sanitizedEmail })
       .select('+emailVerificationOTP +emailVerificationOTPExpires');
     
     if (!user) {
@@ -178,7 +185,10 @@ router.post('/resend-verification-otp', [
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    // Sanitize email to prevent injection
+    const sanitizedEmail = sanitizeEmail(email);
+
+    const user = await User.findOne({ email: sanitizedEmail });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -223,8 +233,11 @@ router.post('/login', [
   try {
     const { email, password } = req.body;
 
+    // Sanitize email to prevent injection
+    const sanitizedEmail = sanitizeEmail(email);
+
     // Find user and include password field
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: sanitizedEmail }).select('+password');
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -256,6 +269,9 @@ router.post('/login', [
     // Generate token
     const token = generateToken(user._id);
 
+    // Mark user as online
+    await user.setOnline();
+
     res.json({
       message: 'Login successful',
       token,
@@ -264,7 +280,9 @@ router.post('/login', [
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        isEmailVerified: user.isEmailVerified
+        isEmailVerified: user.isEmailVerified,
+        isOnline: user.isOnline,
+        lastActivity: user.lastActivity
       }
     });
   } catch (error) {
@@ -285,7 +303,10 @@ router.post('/forgot-password', [
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    // Sanitize email to prevent injection
+    const sanitizedEmail = sanitizeEmail(email);
+
+    const user = await User.findOne({ email: sanitizedEmail });
     if (!user) {
       return res.status(404).json({ message: 'User not found with this email' });
     }
@@ -330,8 +351,11 @@ router.post('/verify-reset-otp', [
   try {
     const { email, otp } = req.body;
 
+    // Sanitize email to prevent injection
+    const sanitizedEmail = sanitizeEmail(email);
+
     // Find user with password reset OTP fields
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email: sanitizedEmail })
       .select('+passwordResetOTP +passwordResetOTPExpires');
     
     if (!user) {
@@ -371,8 +395,11 @@ router.post('/reset-password', [
   try {
     const { email, otp, newPassword } = req.body;
 
+    // Sanitize email to prevent injection
+    const sanitizedEmail = sanitizeEmail(email);
+
     // Find user with password reset OTP fields
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email: sanitizedEmail })
       .select('+passwordResetOTP +passwordResetOTPExpires +password');
     
     if (!user) {
@@ -393,6 +420,23 @@ router.post('/reset-password', [
   } catch (error) {
     console.error('Password reset error:', error);
     res.status(500).json({ message: 'Server error during password reset' });
+  }
+});
+
+// @route   POST /api/auth/logout
+// @desc    Logout user and set offline status
+// @access  Private
+router.post('/logout', authenticateToken, async (req, res) => {
+  try {
+    // Set user offline
+    await req.user.setOffline();
+    
+    res.json({
+      message: 'Logout successful'
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ message: 'Error during logout' });
   }
 });
 

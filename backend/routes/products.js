@@ -31,10 +31,12 @@ router.get('/', [
     }
     
     if (search) {
+      // Escape regex special characters to prevent injection
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { tags: { $in: [new RegExp(search, 'i')] } }
+        { title: { $regex: escapedSearch, $options: 'i' } },
+        { description: { $regex: escapedSearch, $options: 'i' } },
+        { tags: { $in: [new RegExp(escapedSearch, 'i')] } }
       ];
     }
 

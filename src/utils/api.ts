@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/api/auth/forgot-password',
     VERIFY_RESET_OTP: '/api/auth/verify-reset-otp',
     RESET_PASSWORD: '/api/auth/reset-password',
+    LOGOUT: '/api/auth/logout',
     PROFILE: '/api/users/profile',
   },
   PRODUCTS: {
@@ -53,6 +54,7 @@ export const API_ENDPOINTS = {
     GET_STATS: (id: string) => `/api/users/${id}/stats`,
     GET_PRODUCTS: (id: string) => `/api/users/${id}/products`,
     GET_INTERESTED: (id: string) => `/api/users/${id}/interested`,
+    GET_ONLINE: '/api/users/online',
   }
 };
 

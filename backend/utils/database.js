@@ -137,7 +137,7 @@ const validateDataIntegrity = async () => {
     
     // Check for users with invalid email formats
     const usersWithInvalidEmails = await User.find({
-      email: { $not: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ }
+      email: { $not: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ }
     });
     if (usersWithInvalidEmails.length > 0) {
       issues.push(`Found ${usersWithInvalidEmails.length} users with invalid emails`);

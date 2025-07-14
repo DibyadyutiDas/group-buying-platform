@@ -21,3 +21,29 @@ export const formatDate = (dateString: string): string => {
 export const cn = (...classes: (string | undefined | null | false)[]): string => {
   return classes.filter(Boolean).join(' ');
 };
+
+// Sanitize text content to prevent XSS attacks
+export const sanitizeText = (text: string | undefined | null): string => {
+  if (!text) return '';
+  
+  // Remove potentially dangerous characters and HTML tags
+  return text
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;')
+    .trim();
+};
+
+// Sanitize alt text for images specifically
+export const sanitizeAltText = (text: string | undefined | null): string => {
+  if (!text) return '';
+  
+  // More restrictive sanitization for alt text
+  return text
+    .replace(/[<>"'/\\]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .substring(0, 100); // Limit length
+};

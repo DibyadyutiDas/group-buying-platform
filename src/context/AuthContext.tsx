@@ -285,10 +285,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    logoutUser();
-    setUser(null);
-    success('Logged out', 'You have been successfully logged out');
+    try {
+      // Call logout API to set user offline
+      apiCall(API_ENDPOINTS.AUTH.LOGOUT, {
+        method: 'POST'
+      }).catch(err => {
+        console.error('Error calling logout API:', err);
+      });
+      
+      logoutUser();
+      setUser(null);
+      setError(null);
+      success('Logged out successfully');
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
   };
 
   return (

@@ -8,6 +8,7 @@ import Button from '../components/common/Button';
 import Comments from '../components/product/Comments';
 import ProgressBar from '../components/loading/ProgressBar';
 import { getUserById } from '../utils/storage';
+import { sanitizeAltText } from '../utils/helpers';
 import { formatDate, formatPrice } from '../utils/helpers';
 
 const ProductDetailPage: React.FC = () => {
@@ -90,7 +91,7 @@ const ProductDetailPage: React.FC = () => {
             <div className="bg-gray-200 dark:bg-gray-700 h-64 md:h-auto">
               <img
                 src={product.image}
-                alt={product.title}
+                alt={sanitizeAltText(product.title)}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
@@ -143,7 +144,7 @@ const ProductDetailPage: React.FC = () => {
                 <div className="flex items-center">
                   <img
                     src={createdByUser?.avatar}
-                    alt={createdByUser?.name}
+                    alt={sanitizeAltText(createdByUser?.name)}
                     className="h-10 w-10 rounded-full mr-3"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;

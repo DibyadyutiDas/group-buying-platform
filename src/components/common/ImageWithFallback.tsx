@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { ImageIcon, ZoomIn } from 'lucide-react';
+import { sanitizeAltText } from '../../utils/helpers';
 
 interface ImageWithFallbackProps {
   src: string;
@@ -74,7 +75,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       <img
         ref={imgRef}
         src={imgSrc}
-        alt={alt}
+        alt={sanitizeAltText(alt)}
         className={`w-full h-full object-cover transition-transform duration-300 ${
           isZoomed ? 'scale-110' : 'scale-100'
         } ${isLoading ? 'opacity-0' : 'opacity-100'}`}

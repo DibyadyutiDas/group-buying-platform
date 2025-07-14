@@ -5,6 +5,7 @@ import Button from '../common/Button';
 import { Comment, BackendComment } from '../../types';
 import { getComments, addComment, getUserById } from '../../utils/storage';
 import { apiCall, API_ENDPOINTS } from '../../utils/api';
+import { sanitizeAltText } from '../../utils/helpers';
 
 interface CommentsProps {
   productId: string;
@@ -28,7 +29,7 @@ const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
       <div className="flex items-start">
         <img
           src={user.avatar}
-          alt={user.name}
+          alt={sanitizeAltText(user.name)}
           className="h-10 w-10 rounded-full mr-3"
         />
         <div className="flex-1">
@@ -184,7 +185,7 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
           <div className="flex items-start">
             <img
               src={user.avatar}
-              alt={user.name}
+              alt={sanitizeAltText(user.name)}
               className="h-10 w-10 rounded-full mr-3"
             />
             <div className="flex-1">

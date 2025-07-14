@@ -6,3 +6,4 @@ export { default as Toast } from './Toast';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as ImageWithFallback } from './ImageWithFallback';
 export { default as BackendStatus } from './BackendStatus';
+export { default as OnlineUsers } from './OnlineUsers';
