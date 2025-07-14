@@ -5,7 +5,7 @@ import Button from '../common/Button';
 import { Comment, BackendComment } from '../../types';
 import { getComments, addComment, getUserById } from '../../utils/storage';
 import { apiCall, API_ENDPOINTS } from '../../utils/api';
-import { sanitizeAltText } from '../../utils/helpers';
+import { sanitizeAltText, sanitizeText } from '../../utils/helpers';
 
 interface CommentsProps {
   productId: string;
@@ -34,10 +34,10 @@ const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
         />
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</h4>
+            <h4 className="text-sm font-medium text-gray-900 dark:text-white">{sanitizeText(user.name)}</h4>
             <span className="text-xs text-gray-500 dark:text-gray-400">{formattedDate}</span>
           </div>
-          <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">{comment.text}</p>
+          <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">{sanitizeText(comment.text)}</p>
         </div>
       </div>
     </div>

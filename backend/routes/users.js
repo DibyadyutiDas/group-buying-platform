@@ -4,7 +4,7 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const Comment = require('../models/Comment');
 const { authenticateToken } = require('../middleware/auth');
-const { handleValidationErrors, sanitizeEmail } = require('../middleware/validation');
+const { handleValidationErrors, sanitizeEmail, sanitizeId } = require('../middleware/validation');
 
 const router = express.Router();
 
@@ -66,10 +66,16 @@ router.put('/profile', authenticateToken, [
       }
     }
 
+    // Sanitize inputs before database update
+    const updateData = {};
+    if (name) updateData.name = name.toString().trim();
+    if (email) updateData.email = sanitizeEmail(email);
+    if (avatar) updateData.avatar = avatar.toString().trim();
+
     // Update user
     const updatedUser = await User.findByIdAndUpdate(
-      req.user._id,
-      { name, email, avatar },
+      sanitizeId(req.user._id.toString()),
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -244,10 +250,17 @@ router.get('/:id/products', [
     const skip = (page - 1) * limit;
     const { status } = req.query;
 
-    // Build query
-    const query = { createdBy: req.params.id };
-    if (status) {
-      query.status = status;
+    // Sanitize user ID parameter
+    const sanitizedUserId = sanitizeId(req.params.id);
+
+    // Build query with sanitized inputs
+    const query = { createdBy: sanitizedUserId };
+    if (status && typeof status === 'string') {
+      // Ensure status is a valid enum value
+      const validStatuses = ['active', 'inactive', 'pending', 'completed'];
+      if (validStatuses.includes(status.trim())) {
+        query.status = status.trim();
+      }
     }
 
     // Get products

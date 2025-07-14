@@ -8,7 +8,7 @@ import Button from '../components/common/Button';
 import Comments from '../components/product/Comments';
 import ProgressBar from '../components/loading/ProgressBar';
 import { getUserById } from '../utils/storage';
-import { sanitizeAltText } from '../utils/helpers';
+import { sanitizeAltText, sanitizeText } from '../utils/helpers';
 import { formatDate, formatPrice } from '../utils/helpers';
 
 const ProductDetailPage: React.FC = () => {
@@ -105,9 +105,9 @@ const ProductDetailPage: React.FC = () => {
               <div className="flex justify-between items-start">
                 <div>
                   <span className="inline-block px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full mb-2">
-                    {product.category}
+                    {sanitizeText(product.category)}
                   </span>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{product.title}</h1>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{sanitizeText(product.title)}</h1>
                 </div>
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatPrice(product.price)}
@@ -115,7 +115,7 @@ const ProductDetailPage: React.FC = () => {
               </div>
               
               <div className="mt-6">
-                <p className="text-gray-700 dark:text-gray-300">{product.description}</p>
+                <p className="text-gray-700 dark:text-gray-300">{sanitizeText(product.description)}</p>
               </div>
               
               {/* Progress Bar */}
@@ -152,7 +152,7 @@ const ProductDetailPage: React.FC = () => {
                     }}
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Added by {createdByUser?.name}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">Added by {sanitizeText(createdByUser?.name)}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {new Date(product.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',

@@ -26,25 +26,36 @@ router.get('/', [
     // Build query
     const query = { status: 'active' };
     
-    if (category && category !== 'all') {
-      query.category = category;
+    // Sanitize inputs
+    if (category && category !== 'all' && typeof category === 'string') {
+      // Validate category against known values
+      const validCategories = ['electronics', 'clothing', 'books', 'home', 'sports', 'other'];
+      if (validCategories.includes(category.trim().toLowerCase())) {
+        query.category = category.trim().toLowerCase();
+      }
     }
     
-    if (search) {
-      // Escape regex special characters to prevent injection
-      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      query.$or = [
-        { title: { $regex: escapedSearch, $options: 'i' } },
-        { description: { $regex: escapedSearch, $options: 'i' } },
-        { tags: { $in: [new RegExp(escapedSearch, 'i')] } }
-      ];
+    if (search && typeof search === 'string') {
+      // Sanitize search input and escape regex special characters
+      const sanitizedSearch = search.trim().slice(0, 100); // Limit length
+      const escapedSearch = sanitizedSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      if (escapedSearch.length > 0) {
+        query.$or = [
+          { title: { $regex: escapedSearch, $options: 'i' } },
+          { description: { $regex: escapedSearch, $options: 'i' } },
+          { tags: { $in: [new RegExp(escapedSearch, 'i')] } }
+        ];
+      }
     }
 
-    // Build sort
+    // Build sort with validation
     let sortOption = { createdAt: -1 }; // Default: newest first
-    if (sort === 'oldest') sortOption = { createdAt: 1 };
-    else if (sort === 'price-low') sortOption = { price: 1 };
-    else if (sort === 'price-high') sortOption = { price: -1 };
+    if (sort && typeof sort === 'string') {
+      const validSorts = ['oldest', 'price-low', 'price-high'];
+      if (sort === 'oldest') sortOption = { createdAt: 1 };
+      else if (sort === 'price-low') sortOption = { price: 1 };
+      else if (sort === 'price-high') sortOption = { price: -1 };
+    }
 
     // Get products with pagination
     const products = await Product.find(query)

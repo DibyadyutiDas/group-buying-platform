@@ -6,7 +6,7 @@ import ImageWithFallback from '../common/ImageWithFallback';
 import ProgressBar from '../loading/ProgressBar';
 import { Product, User } from '../../types';
 import { getUserById } from '../../utils/storage';
-import { formatDate, formatPrice, sanitizeAltText } from '../../utils/helpers';
+import { formatDate, formatPrice, sanitizeAltText, sanitizeText } from '../../utils/helpers';
 
 interface ProductCardProps {
   product: Product;
@@ -73,7 +73,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {product.title}
         </h3>
         <p className="text-gray-600 dark:text-gray-300 text-sm mb-2 line-clamp-2 flex-grow">
-          {product.description}
+          {sanitizeText(product.description)}
         </p>
         
         {showProgress && (
@@ -99,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 alt={sanitizeAltText(createdByUser?.name)}
                 className="h-5 w-5 rounded-full mr-1"
               />
-              <span>{createdByUser?.name || 'Anonymous'}</span>
+              <span>{sanitizeText(createdByUser?.name) || 'Anonymous'}</span>
             </div>
             
             <div className="flex items-center">

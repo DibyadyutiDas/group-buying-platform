@@ -74,10 +74,17 @@ app.use(cors({
     // Check if origin is in allowed list or matches pattern
     const isAllowed = allowedOrigins.some(allowedOrigin => {
       if (origin === allowedOrigin) return true;
-      // More secure domain checking for GitHub Pages
-      if (allowedOrigin === 'https://dibyadyutidas.github.io' && 
-          origin.startsWith('https://dibyadyutidas.github.io')) {
-        return true;
+      // More secure domain checking for GitHub Pages with proper URL validation
+      if (allowedOrigin === 'https://dibyadyutidas.github.io') {
+        try {
+          const originUrl = new URL(origin);
+          const allowedUrl = new URL(allowedOrigin);
+          // Check exact hostname match and secure protocol
+          return originUrl.hostname === allowedUrl.hostname && 
+                 originUrl.protocol === 'https:';
+        } catch (e) {
+          return false;
+        }
       }
       return false;
     });

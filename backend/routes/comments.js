@@ -81,36 +81,40 @@ router.post('/', authenticateToken, [
   try {
     const { text, productId, parentComment } = req.body;
 
+    // Sanitize inputs
+    const sanitizedProductId = sanitizeId(productId);
+    const sanitizedParentComment = parentComment ? sanitizeId(parentComment) : null;
+
     // Verify product exists
-    const product = await Product.findById(productId);
+    const product = await Product.findById(sanitizedProductId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
     // If replying to a comment, verify parent comment exists
-    if (parentComment) {
-      const parentCommentDoc = await Comment.findById(parentComment);
+    if (sanitizedParentComment) {
+      const parentCommentDoc = await Comment.findById(sanitizedParentComment);
       if (!parentCommentDoc) {
         return res.status(404).json({ message: 'Parent comment not found' });
       }
-      if (parentCommentDoc.productId.toString() !== productId) {
+      if (parentCommentDoc.productId.toString() !== sanitizedProductId) {
         return res.status(400).json({ message: 'Parent comment does not belong to this product' });
       }
     }
 
-    // Create comment
+    // Create comment with sanitized data
     const comment = new Comment({
-      text,
-      productId,
+      text: text.toString().trim(),
+      productId: sanitizedProductId,
       userId: req.user._id,
-      parentComment: parentComment || null
+      parentComment: sanitizedParentComment
     });
 
     await comment.save();
 
     // If this is a reply, add it to parent's replies array
-    if (parentComment) {
-      await Comment.findByIdAndUpdate(parentComment, {
+    if (sanitizedParentComment) {
+      await Comment.findByIdAndUpdate(sanitizedParentComment, {
         $push: { replies: comment._id }
       });
     }
