@@ -5,7 +5,6 @@ import Card from '../common/Card';
 import ImageWithFallback from '../common/ImageWithFallback';
 import ProgressBar from '../loading/ProgressBar';
 import { Product, User } from '../../types';
-import { getUserById } from '../../utils/storage';
 import { formatDate, formatPrice, sanitizeAltText, sanitizeText } from '../../utils/helpers';
 
 interface ProductCardProps {
@@ -21,7 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const navigate = useNavigate();
   
-  const createdByUser: User | undefined = getUserById(product.createdBy);
+  const createdByUser: User | undefined = product.createdBy;
   const interestCount = product.interestedUsers.length;
   const minQuantity = 5; // Default minimum quantity for demo
   
@@ -42,6 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           src={product.image}
           alt={sanitizeAltText(product.title)}
           className="h-48 w-full"
+          category={product.category}
           enableZoom
           lazy
         />

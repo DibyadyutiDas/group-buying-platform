@@ -7,6 +7,7 @@ import { useToast } from '../context/ToastContext';
 import Button from '../components/common/Button';
 import Comments from '../components/product/Comments';
 import ProgressBar from '../components/loading/ProgressBar';
+import ImageWithFallback from '../components/common/ImageWithFallback';
 import { getUserById } from '../utils/storage';
 import { sanitizeAltText, sanitizeText } from '../utils/helpers';
 import { formatDate, formatPrice } from '../utils/helpers';
@@ -89,14 +90,11 @@ const ProductDetailPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Product Image */}
             <div className="bg-gray-200 dark:bg-gray-700 h-64 md:h-auto">
-              <img
+              <ImageWithFallback
                 src={product.image}
                 alt={sanitizeAltText(product.title)}
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'https://images.pexels.com/photos/4483610/pexels-photo-4483610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
-                }}
+                category={product.category}
               />
             </div>
             
@@ -142,14 +140,11 @@ const ProductDetailPage: React.FC = () => {
               
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-600">
                 <div className="flex items-center">
-                  <img
-                    src={createdByUser?.avatar}
+                  <ImageWithFallback
+                    src={createdByUser?.avatar || ''}
                     alt={sanitizeAltText(createdByUser?.name)}
                     className="h-10 w-10 rounded-full mr-3"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://i.pravatar.cc/150?img=1';
-                    }}
+                    fallbackSrc="https://i.pravatar.cc/150?img=1"
                   />
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">Added by {sanitizeText(createdByUser?.name)}</p>

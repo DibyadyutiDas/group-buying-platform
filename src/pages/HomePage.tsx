@@ -18,7 +18,7 @@ const HomePage: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-700 py-20 px-4 sm:px-6 lg:px-8 text-white">
+      <section className="bg-blue-600 py-20 px-4 sm:px-6 lg:px-8 text-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center md:text-left md:flex md:items-center md:justify-between">
             <div className="md:w-7/12">

@@ -21,11 +21,27 @@ export default {
       },
       colors: {
         primary: {
-          50: '#eff6ff',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
+          DEFAULT: '#1d4ed8',
+          light: '#3b82f6',
+          dark: '#1e40af',
         },
+        secondary: {
+          DEFAULT: '#64748b',
+          light: '#94a3b8',
+          dark: '#475569',
+        },
+        background: {
+          light: '#f8fafc',
+          dark: '#0f172a',
+        },
+        surface: {
+          light: '#ffffff',
+          dark: '#1e293b',
+        },
+        text: {
+          light: '#0f172a',
+          dark: '#f8fafc',
+        }
       },
       spacing: {
         '18': '4.5rem',

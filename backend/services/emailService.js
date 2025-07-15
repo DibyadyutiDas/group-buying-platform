@@ -44,7 +44,7 @@ class EmailService {
               box-shadow: 0 0 10px rgba(0,0,0,0.1); 
             }
             .header { 
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+              background: #667eea; 
               color: white; 
               padding: 20px; 
               text-align: center; 
@@ -147,7 +147,7 @@ class EmailService {
               box-shadow: 0 0 10px rgba(0,0,0,0.1); 
             }
             .header { 
-              background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); 
+              background: #ff6b6b; 
               color: white; 
               padding: 20px; 
               text-align: center; 

@@ -9,25 +9,42 @@ interface ImageWithFallbackProps {
   fallbackSrc?: string;
   enableZoom?: boolean;
   lazy?: boolean;
+  category?: string;
 }
 
 const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   src,
   alt,
   className = '',
-  fallbackSrc = 'https://images.pexels.com/photos/4483610/pexels-photo-4483610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+  fallbackSrc,
   enableZoom = false,
   lazy = true,
+  category,
 }) => {
-  const [imgSrc, setImgSrc] = useState(src);
+  // Generate category-specific fallback images
+  const getCategoryFallback = (category?: string) => {
+    const fallbacks = {
+      electronics: 'https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      clothing: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      books: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      home: 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      sports: 'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      other: 'https://images.pexels.com/photos/4483610/pexels-photo-4483610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+    };
+    
+    return fallbacks[category as keyof typeof fallbacks] || fallbacks.other;
+  };
+
+  const defaultFallback = fallbackSrc || getCategoryFallback(category);
+  const [imgSrc, setImgSrc] = useState(src || defaultFallback);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   const handleError = () => {
-    if (imgSrc !== fallbackSrc) {
-      setImgSrc(fallbackSrc);
+    if (imgSrc !== defaultFallback) {
+      setImgSrc(defaultFallback);
     } else {
       setIsError(true);
     }

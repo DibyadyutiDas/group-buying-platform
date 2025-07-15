@@ -49,11 +49,21 @@ This repository excludes sensitive files for security purposes. See [SECURITY_GU
 ---
 
 ## 🔥 Key Features
-✅ **User-friendly Dashboard** – Easily track upcoming purchases and group deals.  
-✅ **Smart Matching Algorithm** – Connect users planning to buy the same item.  
-✅ **Secure Transactions** – Integrated with payment gateways for safe transactions.  
-✅ **Notifications & Reminders** – Keep users updated on group purchase deadlines.  
-✅ **Admin Controls** – Manage users, verify deals, and oversee transactions.  
+✅ **Enhanced Security** – Comprehensive protection against XSS, injection attacks, and vulnerabilities  
+✅ **Smart Image System** – Category-specific fallback images for better visual experience  
+✅ **User-friendly Dashboard** – Easily track upcoming purchases and group deals  
+✅ **Smart Matching Algorithm** – Connect users planning to buy the same item  
+✅ **Modern UI/UX** – Dark mode support, responsive design, and intuitive navigation  
+✅ **Real-time Notifications** – Toast notifications and status indicators  
+✅ **Secure Transactions** – Enhanced validation and data protection  
+✅ **Admin Controls** – Manage users, verify deals, and oversee transactions  
+
+## 🔐 Security Features
+✅ **15 Security Vulnerabilities Fixed** – Complete CodeQL security audit compliance  
+✅ **XSS Prevention** – Comprehensive input sanitization across all components  
+✅ **Database Protection** – Injection-proof queries with input validation  
+✅ **CORS Security** – Proper origin validation and security headers  
+✅ **Error Handling** – Secure error messages without data exposure  
 
 ---
 
@@ -138,6 +148,32 @@ npm run deploy
 # Push to your Render-connected repository
 git push origin main
 ```
+
+---
+
+## 🆕 Recent Updates (July 2025)
+
+### 🔐 Security Enhancements
+- **Fixed 15 CodeQL Security Vulnerabilities** - Complete security audit and remediation
+- **Enhanced Input Validation** - Multi-layer validation on frontend and backend
+- **XSS Prevention** - Comprehensive text sanitization across all components
+- **Database Security** - Injection-proof queries with proper input sanitization
+
+### 🎨 UI/UX Improvements  
+- **Enhanced Image System** - Category-specific fallback images for better visual diversity
+- **Navigation Updates** - Customized header navigation as per user preferences
+- **Better Error Handling** - User-friendly error messages and fallback mechanisms
+- **Performance Optimizations** - Improved loading states and component efficiency
+
+### 📚 Documentation
+- **Security Documentation** - Detailed security improvements and best practices
+- **Improvement Tracking** - Comprehensive documentation of completed enhancements
+- **Updated README** - Reflects current capabilities and features
+
+For detailed information about improvements, see:
+- [Security Improvements](./docs/SECURITY_IMPROVEMENTS.md)
+- [Completed Improvements](./docs/IMPROVEMENTS_COMPLETED.md)
+- [Improvement Suggestions](./docs/IMPROVEMENT_SUGGESTIONS.md)
 
 ---
 

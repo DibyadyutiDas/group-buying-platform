@@ -17,6 +17,8 @@ import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import UserProfilePage from './pages/UserProfilePage';
+import DemoPage from './pages/DemoPage';
 
 function App() {
   // Get basename for GitHub Pages deployment
@@ -30,16 +32,15 @@ function App() {
             <NotificationProvider>
               <AuthProvider>
                 <ProductProvider>
-                <Layout>
                   <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/products" element={<ProductsPage />} />
-                    <Route path="/products/:id" element={<ProductDetailPage />} />
+                    <Route path="/" element={<Layout><HomePage /></Layout>} />
+                    <Route path="/products" element={<Layout><ProductsPage /></Layout>} />
+                    <Route path="/products/:id" element={<Layout><ProductDetailPage /></Layout>} />
                     <Route 
                       path="/products/new" 
                       element={
                         <RequireAuth>
-                          <AddProductPage />
+                          <Layout><AddProductPage /></Layout>
                         </RequireAuth>
                       } 
                     />
@@ -47,16 +48,18 @@ function App() {
                       path="/dashboard" 
                       element={
                         <RequireAuth>
-                          <DashboardPage />
+                          <Layout><DashboardPage /></Layout>
                         </RequireAuth>
                       } 
                     />
+                    <Route path="/profile" element={<UserProfilePage />} />
+                    <Route path="/profile/:userId" element={<UserProfilePage />} />
+                    <Route path="/demo" element={<Layout><DemoPage /></Layout>} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
-                </Layout>
               </ProductProvider>
             </AuthProvider>
             </NotificationProvider>

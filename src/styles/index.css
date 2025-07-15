@@ -137,24 +137,22 @@ button[class*="bg-white"] {
 }
 
 /* Custom gradient backgrounds */
-.gradient-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+ .gradient-bg {
+  background: #667eea;
 }
 
-.gradient-bg-dark {
-  background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+ .gradient-bg-dark {
+  background: #1e3a8a;
 }
 
 /* Image loading placeholder */
-.image-loading {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
+ .image-loading {
+  background: #f0f0f0;
   animation: loading 1.5s infinite;
 }
 
-.dark .image-loading {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-  background-size: 200% 100%;
+ .dark .image-loading {
+  background: #374151;
 }
 
 @keyframes loading {

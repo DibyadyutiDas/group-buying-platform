@@ -11,7 +11,7 @@ import { sanitizeText } from '../../utils/helpers';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout, loading, isBackendAvailable: authBackendAvailable } = useAuth();
+  const { user, loading, isBackendAvailable: authBackendAvailable } = useAuth();
   const { isBackendAvailable: productBackendAvailable } = useProducts();
   const location = useLocation();
   
@@ -23,11 +23,6 @@ const Header: React.FC = () => {
   
   const closeMenu = () => {
     setIsMenuOpen(false);
-  };
-  
-  const handleLogout = () => {
-    logout();
-    closeMenu();
   };
   
   const navItems = [
@@ -99,17 +94,14 @@ const Header: React.FC = () => {
               <>
                 <NotificationBadge />
                 <div className="flex items-center space-x-3">
-                  <div className="flex items-center">
+                  <Link to="/profile" className="flex items-center hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg px-2 py-1 transition-colors">
                     <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 ring-2 ring-gray-200 dark:ring-gray-700 flex items-center justify-center">
                       <User className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                     </div>
                     <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       {sanitizeText(user.name)}
                     </span>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={handleLogout}>
-                    Logout
-                  </Button>
+                  </Link>
                 </div>
               </>
             ) : (
@@ -190,14 +182,6 @@ const Header: React.FC = () => {
                   <div className="ml-auto">
                     <NotificationBadge />
                   </div>
-                </div>
-                <div className="mt-3 space-y-1">
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  >
-                    Logout
-                  </button>
                 </div>
               </>
             ) : (

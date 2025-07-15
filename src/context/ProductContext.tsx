@@ -46,10 +46,14 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
             image: product.image,
             category: product.category,
             estimatedPurchaseDate: product.estimatedPurchaseDate,
-            createdBy: typeof product.createdBy === 'string' ? product.createdBy : product.createdBy._id,
+            createdBy: typeof product.createdBy === 'string' 
+              ? { id: product.createdBy, name: 'Unknown User', email: '', avatar: '' } 
+              : { id: product.createdBy._id, name: product.createdBy.name, email: product.createdBy.email, avatar: product.createdBy.avatar || '' },
             createdAt: product.createdAt,
             interestedUsers: product.interestedUsers.map((user: BackendUser | string) => 
-              typeof user === 'string' ? user : user._id
+              typeof user === 'string' 
+                ? { id: user, name: 'Unknown User', email: '', avatar: '' } 
+                : { id: user._id, name: user.name, email: user.email, avatar: user.avatar || '' }
             ),
             status: product.status || 'active'
           }));
@@ -111,10 +115,14 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
             image: newProduct.image,
             category: newProduct.category,
             estimatedPurchaseDate: newProduct.estimatedPurchaseDate,
-            createdBy: newProduct.createdBy._id || newProduct.createdBy,
+            createdBy: typeof newProduct.createdBy === 'string'
+              ? { id: newProduct.createdBy, name: 'Unknown User', email: '', avatar: '' }
+              : { id: newProduct.createdBy._id, name: newProduct.createdBy.name, email: newProduct.createdBy.email, avatar: newProduct.createdBy.avatar || '' },
             createdAt: newProduct.createdAt,
             interestedUsers: newProduct.interestedUsers?.map((user: BackendUser | string) => 
-              typeof user === 'string' ? user : user._id
+              typeof user === 'string' 
+                ? { id: user, name: 'Unknown User', email: '', avatar: '' }
+                : { id: user._id, name: user.name, email: user.email, avatar: user.avatar || '' }
             ) || [],
             status: newProduct.status || 'active'
           };
@@ -168,10 +176,14 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
             image: updatedProduct.image,
             category: updatedProduct.category,
             estimatedPurchaseDate: updatedProduct.estimatedPurchaseDate,
-            createdBy: updatedProduct.createdBy._id || updatedProduct.createdBy,
+            createdBy: typeof updatedProduct.createdBy === 'string'
+              ? { id: updatedProduct.createdBy, name: 'Unknown User', email: '', avatar: '' }
+              : { id: updatedProduct.createdBy._id, name: updatedProduct.createdBy.name, email: updatedProduct.createdBy.email, avatar: updatedProduct.createdBy.avatar || '' },
             createdAt: updatedProduct.createdAt,
             interestedUsers: updatedProduct.interestedUsers?.map((user: BackendUser | string) => 
-              typeof user === 'string' ? user : user._id
+              typeof user === 'string' 
+                ? { id: user, name: 'Unknown User', email: '', avatar: '' }
+                : { id: user._id, name: user.name, email: user.email, avatar: user.avatar || '' }
             ) || [],
             status: updatedProduct.status || 'active'
           };
