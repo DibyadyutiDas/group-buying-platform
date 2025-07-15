@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Users, Circle } from 'lucide-react';
 import { apiCall, API_ENDPOINTS } from '../../utils/api';
 import { BackendUser } from '../../types';
-import { sanitizeAltText } from '../../utils/helpers';
+import { sanitizeAltText, sanitizeText } from '../../utils/helpers';
 
 interface OnlineUsersProps {
   className?: string;
@@ -100,7 +100,7 @@ const OnlineUsers: React.FC<OnlineUsersProps> = ({ className = '' }) => {
               </div>
               <div className="ml-3 min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {user.name}
+                  {sanitizeText(user.name)}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   Active now

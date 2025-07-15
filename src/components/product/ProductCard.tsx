@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <div className="relative">
         <ImageWithFallback
           src={product.image}
-          alt={product.title}
+          alt={sanitizeAltText(product.title)}
           className="h-48 w-full"
           enableZoom
           lazy
@@ -65,12 +65,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <div className="p-4 flex-grow flex flex-col">
         <div className="mb-2">
           <span className="inline-block px-2 py-1 text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">
-            {product.category}
+            {sanitizeText(product.category)}
           </span>
         </div>
         
         <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white line-clamp-2">
-          {product.title}
+          {sanitizeText(product.title)}
         </h3>
         <p className="text-gray-600 dark:text-gray-300 text-sm mb-2 line-clamp-2 flex-grow">
           {sanitizeText(product.description)}

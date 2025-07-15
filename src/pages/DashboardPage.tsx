@@ -7,6 +7,7 @@ import { Product } from '../types';
 import Button from '../components/common/Button';
 import ProductCard from '../components/product/ProductCard';
 import OnlineUsers from '../components/common/OnlineUsers';
+import { sanitizeText } from '../utils/helpers';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -50,7 +51,7 @@ const DashboardPage: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Welcome back, {user.name}! Manage your products and group purchases.
+              Welcome back, {sanitizeText(user.name)}! Manage your products and group purchases.
             </p>
         </div>
         

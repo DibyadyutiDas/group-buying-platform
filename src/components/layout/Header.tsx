@@ -7,6 +7,7 @@ import Button from '../common/Button';
 import ThemeToggle from '../navigation/ThemeToggle';
 import NotificationBadge from '../navigation/NotificationBadge';
 import BackendStatus from '../common/BackendStatus';
+import { sanitizeText } from '../../utils/helpers';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -103,7 +104,7 @@ const Header: React.FC = () => {
                       <User className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                     </div>
                     <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {user.name}
+                      {sanitizeText(user.name)}
                     </span>
                   </div>
                   <Button variant="outline" size="sm" onClick={handleLogout}>
@@ -180,10 +181,10 @@ const Header: React.FC = () => {
                   </div>
                   <div className="ml-3">
                     <div className="text-base font-medium text-gray-800 dark:text-white">
-                      {user.name}
+                      {sanitizeText(user.name)}
                     </div>
                     <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      {user.email}
+                      {sanitizeText(user.email)}
                     </div>
                   </div>
                   <div className="ml-auto">
