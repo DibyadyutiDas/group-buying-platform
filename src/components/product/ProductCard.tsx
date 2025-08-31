@@ -7,6 +7,20 @@ import ProgressBar from '../loading/ProgressBar';
 import { Product, User } from '../../types';
 import { formatDate, formatPrice, sanitizeAltText, sanitizeText } from '../../utils/helpers';
 
+// Sanitizes a URL for use in <img src=...>
+function sanitizeUrl(url?: string): string {
+  if (!url || typeof url !== 'string') return '';
+  // Only allow http(s) URLs and data:image URLs, deny others
+  if (
+    url.startsWith('https://') ||
+    url.startsWith('http://') ||
+    url.startsWith('data:image/')
+  ) {
+    return url;
+  }
+  // fallback avatar if unsafe
+  return 'https://i.pravatar.cc/150?img=1';
+}
 interface ProductCardProps {
   product: Product;
   showInterestCount?: boolean;
@@ -95,7 +109,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="pt-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
             <div className="flex items-center">
               <img 
-                src={createdByUser?.avatar} 
+                src={sanitizeUrl(createdByUser?.avatar)} 
                 alt={sanitizeAltText(createdByUser?.name)}
                 className="h-5 w-5 rounded-full mr-1"
               />
