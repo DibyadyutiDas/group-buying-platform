@@ -2,19 +2,32 @@ import React, { useState, useRef } from 'react';
 import { ImageIcon, ZoomIn } from 'lucide-react';
 import { sanitizeAltText } from '../../utils/helpers';
 
-// Only allow HTTP(S) and safe image data URLs (reject javascript:, unknown, base64 SVG, ...)
+// Only allow safe HTTP(S) avatar/image hosts and safe image data URLs
 function sanitizeImageSrc(input?: string): string {
   if (!input || typeof input !== 'string') return '';
   try {
-    // Allow only https/http/image data URLs
     input = input.trim();
-    if (
-      input.startsWith('http://') ||
-      input.startsWith('https://')
-    ) {
-      return input;
+
+    // List of explicitly trusted image hosts (expand as your app needs)
+    const trustedHosts = [
+      'i.pravatar.cc',
+      // Add other whitelisted hosts here, e.g. 'my-trusted-domain.com'
+    ];
+
+    // If it's a valid http(s) url, check host allow-list
+    if (input.startsWith('http://') || input.startsWith('https://')) {
+      try {
+        const url = new URL(input);
+        // Only allow if host in trusted list
+        if (trustedHosts.includes(url.hostname)) {
+          return input;
+        }
+      } catch {
+        return '';
+      }
     }
-    // Optionally: allow only safe image/* data URLs, block SVG/data with potential script
+
+    // Allow only image/png, image/jpeg, image/gif, image/webp data URLs (NOT SVG!)
     if (
       input.startsWith('data:image/png') ||
       input.startsWith('data:image/jpeg') ||
