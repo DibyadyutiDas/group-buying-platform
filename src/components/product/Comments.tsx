@@ -5,7 +5,7 @@ import Button from '../common/Button';
 import { Comment, BackendComment } from '../../types';
 import { getComments, addComment, getUserById } from '../../utils/storage';
 import { apiCall, API_ENDPOINTS } from '../../utils/api';
-import { sanitizeAltText, sanitizeText } from '../../utils/helpers';
+import { sanitizeAltText, sanitizeText, sanitizeAvatarUrl } from '../../utils/helpers';
 
 interface CommentsProps {
   productId: string;
@@ -28,7 +28,7 @@ const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
     <div className="py-4 border-b border-gray-200 dark:border-gray-600">
       <div className="flex items-start">
         <img
-          src={user.avatar}
+          src={sanitizeAvatarUrl(user.avatar)}
           alt={sanitizeAltText(user.name)}
           className="h-10 w-10 rounded-full mr-3"
         />
@@ -184,7 +184,7 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
         <form onSubmit={handleSubmit} className="mb-6">
           <div className="flex items-start">
             <img
-              src={user.avatar}
+              src={sanitizeAvatarUrl(user.avatar)}
               alt={sanitizeAltText(user.name)}
               className="h-10 w-10 rounded-full mr-3"
             />
