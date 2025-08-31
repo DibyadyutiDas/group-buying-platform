@@ -8,14 +8,16 @@ import { Product, User } from '../../types';
 import { formatDate, formatPrice, sanitizeAltText, sanitizeText } from '../../utils/helpers';
 
 // Sanitizes a URL for use in <img src=...>
+// Strictly only allow valid HTTP(S) image URLs and specific data:image types
 function sanitizeUrl(url?: string): string {
   if (!url || typeof url !== 'string') return '';
-  // Only allow http(s) URLs and data:image URLs, deny others
-  if (
-    url.startsWith('https://') ||
-    url.startsWith('http://') ||
-    url.startsWith('data:image/')
-  ) {
+  // Remove leading/trailing whitespace
+  url = url.trim();
+  // Regular expression for safe http/https URLs ending with an image extension
+  const httpUrlRegex = /^https?:\/\/[^\s]+(\.(jpg|jpeg|png|gif|webp|svg))?([?#][^\s]*)?$/i;
+  // Allow only specific data:image types (png, jpeg, gif, webp, svg)
+  const dataImageRegex = /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,[A-Za-z0-9+\/=]+$/i;
+  if (httpUrlRegex.test(url) || dataImageRegex.test(url)) {
     return url;
   }
   // fallback avatar if unsafe
