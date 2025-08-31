@@ -2,6 +2,34 @@ import React, { useState, useRef } from 'react';
 import { ImageIcon, ZoomIn } from 'lucide-react';
 import { sanitizeAltText } from '../../utils/helpers';
 
+// Only allow HTTP(S) and safe image data URLs (reject javascript:, unknown, base64 SVG, ...)
+function sanitizeImageSrc(input?: string): string {
+  if (!input || typeof input !== 'string') return '';
+  try {
+    // Allow only https/http/image data URLs
+    input = input.trim();
+    if (
+      input.startsWith('http://') ||
+      input.startsWith('https://')
+    ) {
+      return input;
+    }
+    // Optionally: allow only safe image/* data URLs, block SVG/data with potential script
+    if (
+      input.startsWith('data:image/png') ||
+      input.startsWith('data:image/jpeg') ||
+      input.startsWith('data:image/gif') ||
+      input.startsWith('data:image/webp')
+    ) {
+      return input;
+    }
+    // All else, unsafe
+    return '';
+  } catch {
+    return '';
+  }
+}
+
 interface ImageWithFallbackProps {
   src: string;
   alt: string;
@@ -35,8 +63,8 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
     return fallbacks[category as keyof typeof fallbacks] || fallbacks.other;
   };
 
-  const defaultFallback = fallbackSrc || getCategoryFallback(category);
-  const [imgSrc, setImgSrc] = useState(src || defaultFallback);
+  const defaultFallback = sanitizeImageSrc(fallbackSrc || getCategoryFallback(category));
+  const [imgSrc, setImgSrc] = useState(() => sanitizeImageSrc(src) || defaultFallback);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -91,7 +119,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       
       <img
         ref={imgRef}
-        src={imgSrc}
+        src={sanitizeImageSrc(imgSrc)}
         alt={sanitizeAltText(alt)}
         className={`w-full h-full object-cover transition-transform duration-300 ${
           isZoomed ? 'scale-110' : 'scale-100'
