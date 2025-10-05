@@ -47,17 +47,31 @@ export const sanitizeAltText = (text: string | undefined | null): string => {
 };
 
 export const sanitizeAvatarUrl = (url?: string): string => {
-  if (!url || typeof url !== 'string') return 'https://i.pravatar.cc/150?img=1';
+  const DEFAULT_AVATAR = 'https://i.pravatar.cc/150?img=1';
+  if (!url || typeof url !== 'string') return DEFAULT_AVATAR;
   url = url.trim();
 
-  // Allow only http(s) URLs ending in .jpg, .jpeg, .png, .gif, or .webp (no .svg, no data URIs)
-  const safeImgExts = /\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i;
-  const httpUrlRegex = /^https?:\/\/[^\s]+$/i;
+  try {
+    // Parse URL, only allow absolute HTTPS URLs
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') return DEFAULT_AVATAR;
 
-  if (httpUrlRegex.test(url) && safeImgExts.test(url)) {
-    return url;
+    // Only allow certain extensions
+    const safeImgExts = /\.(jpg|jpeg|png|gif|webp)$/i;
+    if (!safeImgExts.test(parsed.pathname)) return DEFAULT_AVATAR;
+
+    // Block suspicious/unusual content in path/query, fragments, etc.
+    if (
+      /[\0-\x1F\x7F]/.test(parsed.pathname + parsed.search + parsed.hash) || // Control chars
+      parsed.pathname.includes('..') ||                                      // Path traversal
+      parsed.search.includes('javascript:') || parsed.hash.includes('javascript:')
+    ) {
+      return DEFAULT_AVATAR;
+    }
+
+    // All checks passed, return sanitized url
+    return parsed.toString();
+  } catch {
+    return DEFAULT_AVATAR;
   }
-
-  // Fallback to default avatar if unsafe or not matched
-  return 'https://i.pravatar.cc/150?img=1';
 };
