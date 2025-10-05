@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, Wifi, WifiOff, User } from 'lucide-react';
+import { Menu, X, ShoppingBag, Wifi, WifiOff, User, LogOut, UserCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useProducts } from '../../context/ProductContext';
 import Button from '../common/Button';
 import ThemeToggle from '../navigation/ThemeToggle';
 import NotificationBadge from '../navigation/NotificationBadge';
-import BackendStatus from '../common/BackendStatus';
 import { sanitizeText } from '../../utils/helpers';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, loading, isBackendAvailable: authBackendAvailable } = useAuth();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { user, loading, logout, isBackendAvailable: authBackendAvailable } = useAuth();
   const { isBackendAvailable: productBackendAvailable } = useProducts();
   const location = useLocation();
   
@@ -22,6 +22,12 @@ const Header: React.FC = () => {
   };
   
   const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsUserMenuOpen(false);
     setIsMenuOpen(false);
   };
   
@@ -46,21 +52,6 @@ const Header: React.FC = () => {
               <ShoppingBag className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">BulkBuy</span>
             </Link>
-            
-            {/* Backend Status Indicator */}
-            <div className="ml-3 flex items-center">
-              {isBackendAvailable ? (
-                <div className="flex items-center text-green-600 dark:text-green-400" title="Backend Connected">
-                  <Wifi className="h-4 w-4" />
-                  <span className="ml-1 text-xs hidden sm:inline">Online</span>
-                </div>
-              ) : (
-                <div className="flex items-center text-orange-600 dark:text-orange-400" title="Using Local Storage">
-                  <WifiOff className="h-4 w-4" />
-                  <span className="ml-1 text-xs hidden sm:inline">Offline</span>
-                </div>
-              )}
-            </div>
           </div>
           
           {/* Desktop Navigation */}
@@ -82,7 +73,17 @@ const Header: React.FC = () => {
           
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <BackendStatus />
+            {isBackendAvailable ? (
+              <div className="flex items-center text-green-600 dark:text-green-400" title="Backend Connected">
+                <Wifi className="h-4 w-4" />
+                <span className="ml-1 text-xs">Online</span>
+              </div>
+            ) : (
+              <div className="flex items-center text-orange-600 dark:text-orange-400" title="Using Local Storage">
+                <WifiOff className="h-4 w-4" />
+                <span className="ml-1 text-xs">Offline</span>
+              </div>
+            )}
             <ThemeToggle />
             
             {loading ? (
@@ -93,15 +94,44 @@ const Header: React.FC = () => {
             ) : user ? (
               <>
                 <NotificationBadge />
-                <div className="flex items-center space-x-3">
-                  <Link to="/profile" className="flex items-center hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg px-2 py-1 transition-colors">
+                <div className="relative">
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex items-center hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg px-2 py-1 transition-colors"
+                  >
                     <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 ring-2 ring-gray-200 dark:ring-gray-700 flex items-center justify-center">
                       <User className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                     </div>
                     <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       {sanitizeText(user.name)}
                     </span>
-                  </Link>
+                  </button>
+
+                  {isUserMenuOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      />
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 py-1">
+                        <Link
+                          to="/profile"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          <UserCircle className="h-4 w-4 mr-3" />
+                          Profile
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          <LogOut className="h-4 w-4 mr-3" />
+                          Logout
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </>
             ) : (
@@ -165,26 +195,41 @@ const Header: React.FC = () => {
               </div>
             ) : user ? (
               <>
-                <Link to="/profile" onClick={closeMenu}>
-                  <div className="flex items-center px-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    <div className="flex-shrink-0">
-                      <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 ring-2 ring-gray-200 dark:ring-gray-700 flex items-center justify-center">
-                        <User className="h-6 w-6 text-gray-600 dark:text-gray-300" />
-                      </div>
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-base font-medium text-gray-800 dark:text-white">
-                        {sanitizeText(user.name)}
-                      </div>
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        {sanitizeText(user.email)}
-                      </div>
-                    </div>
-                    <div className="ml-auto">
-                      <NotificationBadge />
+                <div className="flex items-center px-4 py-2">
+                  <div className="flex-shrink-0">
+                    <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 ring-2 ring-gray-200 dark:ring-gray-700 flex items-center justify-center">
+                      <User className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                     </div>
                   </div>
-                </Link>
+                  <div className="ml-3">
+                    <div className="text-base font-medium text-gray-800 dark:text-white">
+                      {sanitizeText(user.name)}
+                    </div>
+                    <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      {sanitizeText(user.email)}
+                    </div>
+                  </div>
+                  <div className="ml-auto">
+                    <NotificationBadge />
+                  </div>
+                </div>
+                <div className="mt-3 px-2 space-y-1">
+                  <Link
+                    to="/profile"
+                    onClick={closeMenu}
+                    className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <UserCircle className="h-5 w-5 mr-3" />
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center w-full px-3 py-2 rounded-md text-base font-medium text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <LogOut className="h-5 w-5 mr-3" />
+                    Logout
+                  </button>
+                </div>
               </>
             ) : (
               <div className="px-4 py-2 space-y-2">

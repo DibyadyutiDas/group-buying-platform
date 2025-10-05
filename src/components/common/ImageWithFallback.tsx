@@ -79,7 +79,14 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   };
 
   const defaultFallback = sanitizeImageSrc(fallbackSrc || getCategoryFallback(category));
-  const [imgSrc, setImgSrc] = useState(() => sanitizeImageSrc(src) || defaultFallback);
+  const sanitizedSrc = sanitizeImageSrc(src);
+  const [imgSrc, setImgSrc] = useState(() => {
+    if (sanitizedSrc) {
+      return sanitizedSrc;
+    }
+    console.warn('Image URL blocked by sanitization:', src);
+    return defaultFallback;
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);

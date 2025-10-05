@@ -40,6 +40,7 @@ const products = [
     title: 'Wireless Bluetooth Headphones',
     description: 'High-quality wireless headphones with noise cancellation. Perfect for music lovers and professionals.',
     price: 149.99,
+    image: 'https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     category: 'Electronics',
     minQuantity: 5,
     maxQuantity: 50,
@@ -50,6 +51,7 @@ const products = [
     title: 'Organic Cotton T-Shirts',
     description: 'Premium organic cotton t-shirts in various colors. Comfortable and eco-friendly.',
     price: 29.99,
+    image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     category: 'Fashion',
     minQuantity: 10,
     maxQuantity: 100,
@@ -60,6 +62,7 @@ const products = [
     title: 'Smart Home Security Camera',
     description: '1080p HD security camera with night vision and mobile app control.',
     price: 89.99,
+    image: 'https://images.pexels.com/photos/430208/pexels-photo-430208.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     category: 'Electronics',
     minQuantity: 3,
     maxQuantity: 25,
@@ -70,6 +73,7 @@ const products = [
     title: 'Yoga Mat Set',
     description: 'Non-slip yoga mat with carrying strap and blocks. Perfect for home workouts.',
     price: 49.99,
+    image: 'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     category: 'Sports',
     minQuantity: 8,
     maxQuantity: 40,
@@ -111,7 +115,7 @@ const seedDatabase = async () => {
         ...product,
         createdBy: creator._id,
         interestedUsers,
-        estimatedPurchaseDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000) // Random date within 30 days
+        estimatedPurchaseDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000)
       };
     });
 
@@ -121,12 +125,12 @@ const seedDatabase = async () => {
     // Create some sample comments
     const comments = [
       {
-        text: 'Great product! I\'m definitely interested in this bulk purchase.',
+        text: 'Great product! I\'\''m definitely interested in this bulk purchase.',
         productId: createdProducts[0]._id,
         userId: createdUsers[1]._id
       },
       {
-        text: 'What\'s the quality like? Any reviews?',
+        text: 'What\'\''s the quality like? Any reviews?',
         productId: createdProducts[0]._id,
         userId: createdUsers[2]._id
       },
@@ -149,7 +153,7 @@ const seedDatabase = async () => {
     console.log('Sample user credentials:');
     console.log('Admin: john@example.com / password123');
     console.log('User: jane@example.com / password123');
-    
+
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {
