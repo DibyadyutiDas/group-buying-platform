@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ImageIcon, ZoomIn } from 'lucide-react';
+import { Image as ImageIcon, ZoomIn } from 'lucide-react';
 import { sanitizeAltText } from '../../utils/helpers';
 
 function sanitizeImageSrc(input?: string): string {
