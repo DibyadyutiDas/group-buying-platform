@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, Wifi, WifiOff, User, LogOut, UserCircle } from 'lucide-react';
+import { Menu, X, ShoppingBag, Wifi, WifiOff, User, LogOut, CircleUser as UserCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useProducts } from '../../context/ProductContext';
 import Button from '../common/Button';
