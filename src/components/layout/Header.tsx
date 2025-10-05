@@ -165,24 +165,26 @@ const Header: React.FC = () => {
               </div>
             ) : user ? (
               <>
-                <div className="flex items-center px-4">
-                  <div className="flex-shrink-0">
-                    <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 ring-2 ring-gray-200 dark:ring-gray-700 flex items-center justify-center">
-                      <User className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                <Link to="/profile" onClick={closeMenu}>
+                  <div className="flex items-center px-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <div className="flex-shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 ring-2 ring-gray-200 dark:ring-gray-700 flex items-center justify-center">
+                        <User className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                      </div>
+                    </div>
+                    <div className="ml-3">
+                      <div className="text-base font-medium text-gray-800 dark:text-white">
+                        {sanitizeText(user.name)}
+                      </div>
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        {sanitizeText(user.email)}
+                      </div>
+                    </div>
+                    <div className="ml-auto">
+                      <NotificationBadge />
                     </div>
                   </div>
-                  <div className="ml-3">
-                    <div className="text-base font-medium text-gray-800 dark:text-white">
-                      {sanitizeText(user.name)}
-                    </div>
-                    <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      {sanitizeText(user.email)}
-                    </div>
-                  </div>
-                  <div className="ml-auto">
-                    <NotificationBadge />
-                  </div>
-                </div>
+                </Link>
               </>
             ) : (
               <div className="px-4 py-2 space-y-2">

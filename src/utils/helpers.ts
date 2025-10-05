@@ -36,14 +36,26 @@ export const sanitizeText = (text: string | undefined | null): string => {
     .trim();
 };
 
-// Sanitize alt text for images specifically
 export const sanitizeAltText = (text: string | undefined | null): string => {
   if (!text) return '';
-  
-  // More restrictive sanitization for alt text
+
   return text
     .replace(/[<>"'/\\]/g, '')
     .replace(/\s+/g, ' ')
     .trim()
-    .substring(0, 100); // Limit length
+    .substring(0, 100);
+};
+
+export const sanitizeAvatarUrl = (url?: string): string => {
+  if (!url || typeof url !== 'string') return 'https://i.pravatar.cc/150?img=1';
+  url = url.trim();
+
+  const httpUrlRegex = /^https?:\/\/[^\s]+(\.(jpg|jpeg|png|gif|webp|svg))?([?#][^\s]*)?$/i;
+  const dataImageRegex = /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,[A-Za-z0-9+\/=]+$/i;
+
+  if (httpUrlRegex.test(url) || dataImageRegex.test(url)) {
+    return url;
+  }
+
+  return 'https://i.pravatar.cc/150?img=1';
 };

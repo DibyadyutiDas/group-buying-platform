@@ -5,24 +5,8 @@ import Card from '../common/Card';
 import ImageWithFallback from '../common/ImageWithFallback';
 import ProgressBar from '../loading/ProgressBar';
 import { Product, User } from '../../types';
-import { formatDate, formatPrice, sanitizeAltText, sanitizeText } from '../../utils/helpers';
+import { formatDate, formatPrice, sanitizeAltText, sanitizeText, sanitizeAvatarUrl } from '../../utils/helpers';
 
-// Sanitizes a URL for use in <img src=...>
-// Strictly only allow valid HTTP(S) image URLs and specific data:image types
-function sanitizeUrl(url?: string): string {
-  if (!url || typeof url !== 'string') return '';
-  // Remove leading/trailing whitespace
-  url = url.trim();
-  // Regular expression for safe http/https URLs ending with an image extension
-  const httpUrlRegex = /^https?:\/\/[^\s]+(\.(jpg|jpeg|png|gif|webp|svg))?([?#][^\s]*)?$/i;
-  // Allow only specific data:image types (png, jpeg, gif, webp, svg)
-  const dataImageRegex = /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,[A-Za-z0-9+\/=]+$/i;
-  if (httpUrlRegex.test(url) || dataImageRegex.test(url)) {
-    return url;
-  }
-  // fallback avatar if unsafe
-  return 'https://i.pravatar.cc/150?img=1';
-}
 interface ProductCardProps {
   product: Product;
   showInterestCount?: boolean;
@@ -110,8 +94,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           
           <div className="pt-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
             <div className="flex items-center">
-              <img 
-                src={sanitizeUrl(createdByUser?.avatar)} 
+              <img
+                src={sanitizeAvatarUrl(createdByUser?.avatar)}
                 alt={sanitizeAltText(createdByUser?.name)}
                 className="h-5 w-5 rounded-full mr-1"
               />
