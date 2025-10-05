@@ -50,12 +50,14 @@ export const sanitizeAvatarUrl = (url?: string): string => {
   if (!url || typeof url !== 'string') return 'https://i.pravatar.cc/150?img=1';
   url = url.trim();
 
-  const httpUrlRegex = /^https?:\/\/[^\s]+(\.(jpg|jpeg|png|gif|webp|svg))?([?#][^\s]*)?$/i;
-  const dataImageRegex = /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,[A-Za-z0-9+\/=]+$/i;
+  // Allow only http(s) URLs ending in .jpg, .jpeg, .png, .gif, or .webp (no .svg, no data URIs)
+  const safeImgExts = /\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i;
+  const httpUrlRegex = /^https?:\/\/[^\s]+$/i;
 
-  if (httpUrlRegex.test(url) || dataImageRegex.test(url)) {
+  if (httpUrlRegex.test(url) && safeImgExts.test(url)) {
     return url;
   }
 
+  // Fallback to default avatar if unsafe or not matched
   return 'https://i.pravatar.cc/150?img=1';
 };
